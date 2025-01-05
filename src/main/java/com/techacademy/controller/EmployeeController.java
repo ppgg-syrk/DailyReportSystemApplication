@@ -58,10 +58,37 @@ public class EmployeeController {
         // 従業員更新画面に遷移
         return "employees/update";
     }
-
-    
     
     /** 従業員更新処理 */
+    @PostMapping("/{code}/update")
+    public String update(@PathVariable("code") String code, @Validated @ModelAttribute Employee employee, BindingResult res, Model model) {
+        // 入力チェック
+        if (res.hasErrors()) {
+            model.addAttribute("employee", employee);
+            return "employees/update";
+        }
+
+        try {
+            // 更新処理
+            ErrorKinds result = employeeService.update(code, employee);
+
+            // エラー時の処理
+            if (result != ErrorKinds.SUCCESS) {
+                model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+                model.addAttribute("employee", employee);
+                return "employees/update";
+            }
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_EXCEPTION_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_EXCEPTION_ERROR));
+            model.addAttribute("employee", employee);
+            return "employees/update";
+        }
+
+        // 正常終了時のリダイレクト
+        return "redirect:/employees";
+    }
+
 
     // ----- 追加:ここまで -----
 

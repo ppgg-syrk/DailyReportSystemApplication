@@ -116,5 +116,36 @@ public class EmployeeService {
         int passwordLength = employee.getPassword().length();
         return passwordLength < 8 || 16 < passwordLength;
     }
+    
+ // ----- 追加:ここから -----
+    /** 課題　従業員更新 */
+    @Transactional
+    public ErrorKinds update(String code, Employee updatedEmployee) {
+        // 既存データを取得
+        Employee existingEmployee = findByCode(code);
+
+        // 氏名の更新
+        existingEmployee.setName(updatedEmployee.getName());
+
+        // パスワードが入力された場合のみ更新
+        if (updatedEmployee.getPassword() != null && !updatedEmployee.getPassword().isEmpty()) {
+            ErrorKinds passwordCheckResult = employeePasswordCheck(updatedEmployee);
+            if (passwordCheckResult != ErrorKinds.CHECK_OK) {
+                return passwordCheckResult; // パスワードエラーの場合
+            }
+            existingEmployee.setPassword(updatedEmployee.getPassword());
+        }
+
+        // 権限の更新
+        existingEmployee.setRole(updatedEmployee.getRole());
+
+        // 更新日時を設定
+        existingEmployee.setUpdatedAt(LocalDateTime.now());
+
+        // 保存処理
+        employeeRepository.save(existingEmployee);
+
+        return ErrorKinds.SUCCESS;
+    }
 
 }
