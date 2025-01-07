@@ -6,6 +6,11 @@
         <li sec:authorize="hasAuthority('ADMIN')">
             <a class="text-light" th:href="@{/employees}">従業員</a>
         </li>
+        <!-- ここから追加 -->
+        <li>
+            <a class="text-light" th:href="@{/reports}">日報一覧</a>
+        </li>
+        <!-- 追加ここまで -->
     </ul>
     <form method="post" th:action="@{/logout}">
         <div class="p-1">

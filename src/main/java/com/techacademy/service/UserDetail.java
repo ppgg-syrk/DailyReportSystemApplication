@@ -19,13 +19,18 @@ public class UserDetail implements UserDetails {
     public UserDetail(Employee employee) {
         this.employee = employee;
 
-        List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(employee.getRole().toString()));
         this.authorities = authorities;
     }
 
     public Employee getEmployee() {
         return employee;
+    }
+
+    /** 管理者権限を持っているかをチェック */
+    public boolean isAdmin() {
+        return employee.getRole() == Employee.Role.ADMIN;
     }
 
     @Override
