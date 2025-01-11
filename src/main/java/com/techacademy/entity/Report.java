@@ -39,6 +39,7 @@ public class Report {
     // 内容
     @Column(columnDefinition = "LONGTEXT", nullable = false)
     @NotEmpty
+    @Length(max = 100) //①日報の内容が６００字以上でも登録ができる
     private String content;
 
     // 社員番号（外部キー）
