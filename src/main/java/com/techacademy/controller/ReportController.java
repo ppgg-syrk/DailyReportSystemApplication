@@ -1,6 +1,8 @@
 package com.techacademy.controller;
 
 import com.techacademy.entity.Report;
+import com.techacademy.constants.ErrorKinds;
+import com.techacademy.constants.ErrorMessage;
 import com.techacademy.service.ReportService;
 import com.techacademy.service.UserDetail;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -66,8 +68,17 @@ public class ReportController {
     @PostMapping("/add")
     public String add(@Validated @ModelAttribute Report report, BindingResult res, @AuthenticationPrincipal UserDetail userDetail, Model model) {
         if (res.hasErrors()) {
-            return create(report);
+            return "reports/new";
         }
+
+        // 重複チェック
+        ErrorKinds duplicateCheck = reportService.isDuplicateReport(report.getReportDate(), userDetail.getEmployee().getCode());
+        if (duplicateCheck == ErrorKinds.DATECHECK_ERROR) {
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR), ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR));
+            return "reports/new";
+        }
+
+        // 保存処理
         reportService.save(report, userDetail);
         return "redirect:/reports";
     }

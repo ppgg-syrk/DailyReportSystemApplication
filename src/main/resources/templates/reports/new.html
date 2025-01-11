@@ -15,10 +15,12 @@
                 <h1 class="h3 mb-3">日報 新規登録</h1>
                 <div class="col-xl-11">
                     <form th:action="@{/reports/add}" th:object="${report}" method="post">
+                        <!-- 日付 -->
                         <div class="mb-3">
                             <label for="reportDate" class="form-label">日付</label>
-                            <input type="date" id="reportDate" class="form-control" th:field="*{reportDate}" />
+                            <input type="date" class="form-control" th:field="*{reportDate}" id="reportDate">
                             <span th:errors="*{reportDate}" class="text-danger"></span>
+                            <span th:if="${reportDateError}" th:text="${reportDateError}" class="text-danger"></span>
                         </div>
                         
                         <!-- 氏名 --> 

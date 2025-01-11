@@ -6,7 +6,7 @@
 <body class="h-100 overflow-hidden">
     <div class="row h-100">
         <!-- サイドメニュー -->
-        <div class="h-100 p-3 mb-2 bg-dark text-white col-sm-2">
+        <div class="h-100 p-3 bg-dark text-white col-sm-2">
             <nav th:replace="common/side :: copy"></nav>
         </div>
 
@@ -28,18 +28,20 @@
                                     <input class="form-control" type="date" th:field="*{reportDate}" id="reportDate">
                                     <span th:errors="*{reportDate}" class="text-danger"></span>
                                 </div>
+                                
                                 <!-- 氏名 -->
                                 <div class="mb-3">
-                                    <label class="form-label" for="employeeName">氏名</label>
-                                    <p class="mb-1"></p>
-                                    <input class="form-control" type="hidden" id="employeeName" th:value="${report.employee.name}" th:text="${report.employee.name}">
+                                    <label class="form-label">氏名</label>
+                                    <p class="form-control-plaintext" th:text="${report.employee?.name ?: '未設定'}"></p>
                                 </div>
+                                
                                 <!-- タイトル -->
                                 <div class="mb-3">
                                     <label class="form-label" for="title">タイトル</label>
                                     <input class="form-control" type="text" th:field="*{title}" id="title">
                                     <span th:errors="*{title}" class="text-danger"></span>
                                 </div>
+
                                 <!-- 内容 -->
                                 <div class="mb-3">
                                     <label class="form-label" for="content">内容</label>

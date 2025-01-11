@@ -1,10 +1,12 @@
 package com.techacademy.service;
 
+import com.techacademy.constants.ErrorKinds;
 import com.techacademy.entity.Report;
 import com.techacademy.repository.ReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -47,6 +49,17 @@ public class ReportService {
     public Report findById(Integer id) {
         return reportRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("日報が見つかりません: ID = " + id));
+    }
+
+    /** 
+     * 同一日付の日報が既に存在するかをチェック
+     * @param reportDate 日報の日付
+     * @param employeeCode 従業員コード
+     * @return ErrorKinds.DATECHECK_ERROR or ErrorKinds.CHECK_OK
+     */
+    public ErrorKinds isDuplicateReport(LocalDate reportDate, String employeeCode) {
+        boolean exists = reportRepository.existsByReportDateAndEmployeeCodeAndDeleteFlgFalse(reportDate, employeeCode);
+        return exists ? ErrorKinds.DATECHECK_ERROR : ErrorKinds.CHECK_OK;
     }
 
     /** 
