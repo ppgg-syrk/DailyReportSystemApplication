@@ -1,5 +1,6 @@
 package com.techacademy.repository;
 
+import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -30,6 +31,9 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
      * @return 該当の日報リスト
      */
     List<Report> findByReportDateAndEmployeeCodeAndDeleteFlgFalse(LocalDate reportDate, String employeeCode);
+    
+    /** 従業員に紐づく削除されていない日報を取得 */
+    List<Report> findByEmployeeAndDeleteFlgFalse(Employee employee);
     
     /** 
      * 指定の日付と従業員コードの未削除の日報が存在するかチェック

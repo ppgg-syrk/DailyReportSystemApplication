@@ -8,21 +8,24 @@ import java.util.regex.Pattern;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.entity.Employee;
+import com.techacademy.entity.Report;
 import com.techacademy.repository.EmployeeRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ReportService reportService; // ReportService を追加
 
-    public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder) {
+    public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder, ReportService reportService) {
         this.employeeRepository = employeeRepository;
         this.passwordEncoder = passwordEncoder;
+        this.reportService = reportService; // ReportService を注入
     }
 
     // 従業員保存
@@ -50,18 +53,28 @@ public class EmployeeService {
         return ErrorKinds.SUCCESS;
     }
 
-    // 従業員削除
+ // 従業員削除
     @Transactional
     public ErrorKinds delete(String code, UserDetail userDetail) {
-
         // 自分を削除しようとした場合はエラーメッセージを表示
         if (code.equals(userDetail.getEmployee().getCode())) {
             return ErrorKinds.LOGINCHECK_ERROR;
         }
+
+        // 従業員を取得
         Employee employee = findByCode(code);
+
+        // 紐づく日報情報を削除
+        List<Report> reportList = reportService.findByEmployee(employee); // 紐づく日報を取得
+        for (Report report : reportList) {
+            reportService.delete(report.getId()); // 日報を論理削除
+        }
+
+        // 従業員の論理削除
         LocalDateTime now = LocalDateTime.now();
         employee.setUpdatedAt(now);
         employee.setDeleteFlg(true);
+        employeeRepository.save(employee);
 
         return ErrorKinds.SUCCESS;
     }

@@ -1,6 +1,7 @@
 package com.techacademy.service;
 
 import com.techacademy.constants.ErrorKinds;
+import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
 import com.techacademy.repository.ReportRepository;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,15 @@ public class ReportService {
         } else {
             return reportRepository.findByEmployeeCodeAndDeleteFlgFalse(userDetail.getEmployee().getCode());
         }
+    }
+    
+    /**
+     * 指定された従業員に紐づく日報リストを取得
+     * @param employee 従業員エンティティ
+     * @return 日報リスト
+     */
+    public List<Report> findByEmployee(Employee employee) {
+        return reportRepository.findByEmployeeAndDeleteFlgFalse(employee);
     }
 
     /** 
